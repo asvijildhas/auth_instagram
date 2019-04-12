@@ -2,4 +2,15 @@
 library to authenticate user
 
 
-auth_instagram
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+  
+  
+  
+  dependencies {
+	        implementation 'com.github.asvijildhas:auth_instagram:0.1.0'
+	}
