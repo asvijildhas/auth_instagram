@@ -10,4 +10,7 @@
     <string name="login_error">Error during login</string>
     <string name="err_internet_failure">Please check your internet connection</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

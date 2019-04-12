@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.experion.iglogin.R;
-import com.experion.iglogin.interfaces.AuthenticationListener;
+import com.experion.instagramauth.interfaces.AuthenticationListener;
 
 import androidx.annotation.NonNull;
 

@@ -6,6 +6,10 @@ import android.os.Bundle;
 
 import com.experion.iglogin.R;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 public class Navigator {
 
     private static volatile Navigator instance;
@@ -52,5 +56,18 @@ public class Navigator {
         parent.overridePendingTransition(R.anim.enter, R.anim.exit);
         if (finishParent)
             parent.finish();
+    }
+
+
+
+    public void loadFragment(AppCompatActivity parent, int cotainerId, Fragment fragment, boolean addToBackStack) {
+        FragmentTransaction fragmentTransaction = parent.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+        fragmentTransaction.replace(cotainerId, fragment);
+        if (addToBackStack)
+            fragmentTransaction.addToBackStack(null);
+
+
+        fragmentTransaction.commit();
     }
 }

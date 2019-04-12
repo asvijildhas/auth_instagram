@@ -3,8 +3,7 @@ package com.experion.iglogin.activity;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 
@@ -19,119 +18,74 @@ import com.experion.iglogin.R;
 
 import com.experion.iglogin.application_basics.BaseActivity;
 import com.experion.iglogin.databinding.ActivityLoginBinding;
-import com.experion.iglogin.dialog.AuthenticationDialog;
-import com.experion.iglogin.interfaces.AuthenticationListener;
-import com.experion.iglogin.model.InstagramUserDetails;
+import com.experion.iglogin.fragment.LoginFragment;
+import com.experion.instagramauth.interfaces.AuthenticationListener;
+import com.experion.iglogin.interfaces.OnButtonClickCallBack;
 import com.experion.iglogin.util.AppPreferences;
-import com.experion.iglogin.util.ApplicationUtil;
 import com.experion.iglogin.util.Constants;
 import com.experion.iglogin.util.Navigator;
-import com.experion.iglogin.view_model.UserDetailsViewModel;
-import com.experion.instagramauth.activity.AuthenticationActivity;
+import com.experion.instagramauth.fragment.AuthenticationFragment;
 
 
-public class LoginActivity extends BaseActivity implements AuthenticationListener {
-
+public class LoginActivity extends BaseActivity implements AuthenticationListener, OnButtonClickCallBack {
     private ActivityLoginBinding mLoginBinding;
-    private ClickHandler mClickHandler;
-    private Context mContext;
 
-    private AuthenticationDialog authenticationDialog;
     private AppPreferences appPreferences = null;
-
     private String token = null;
-    private String TAG = null;
-    private AuthenticationListener authenticationListener;
-
-    private UserDetailsViewModel userDetailsViewModel;
-
-    private boolean isProgressing = false;
+    private Context mContext;
+    private AuthenticationFragment authFragment;
+    private LoginFragment loginFragment;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLoginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-
         initBasics();
-        initListener();
+        changeFragment(loginFragment, true);
+
+
     }
 
     private void initBasics() {
         mContext = LoginActivity.this.getBaseContext();
-
-        userDetailsViewModel = ViewModelProviders.of(LoginActivity.this).get(UserDetailsViewModel.class);
-        authenticationListener = (AuthenticationListener) this;
-        appPreferences = new AppPreferences(this);
-
-        TAG = LoginActivity.class.getSimpleName();
+        authFragment = new AuthenticationFragment();
+        loginFragment = new LoginFragment();
+        appPreferences = new AppPreferences(mContext);
     }
 
-    private void initListener() {
-        mClickHandler = new ClickHandler(mContext);
-        mLoginBinding.setHandler(mClickHandler);
-    }
-
-    private void getUserInfoByAccessToken(String user_token) {
-        if (ApplicationUtil.isNetworkAvailable(mContext)) {
-            userDetailsViewModel.getUserBasicDetails(user_token).observe(LoginActivity.this, new Observer<InstagramUserDetails>() {
-                @Override
-                public void onChanged(InstagramUserDetails instagramUserDetails) {
-                    if (instagramUserDetails != null) {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constants.BUNDLE_KEY_USER_BASICS, instagramUserDetails);
-                        Navigator.getInstance().navigate(LoginActivity.this, HomeActivity.class, bundle,
-                                false, false);
-
-                    }
-                    isProgressing = false;
-                    mLoginBinding.progressBar.setVisibility(View.GONE);
-                }
-            });
-        } else {
-            isProgressing = false;
-            ApplicationUtil.shortToast(mContext, getResources().getString(R.string.err_internet_failure));
+    private void changeFragment(Fragment fragment, boolean addToBackStack) {
+        try {
+            Navigator.getInstance().loadFragment(LoginActivity.this, R.id.fragment_container, fragment, addToBackStack);
+        } catch (Exception e) {
+            Log.e(LoginActivity.class.getSimpleName(), "Exception:" + e.getMessage());
         }
-
     }
 
 
     @Override
     public void onTokenReceived(String auth_token) {
-//onTokenReceived
-
         if (auth_token == null)
             return;
         appPreferences.putInstagramToken(AppPreferences.TOKEN, auth_token);
         token = auth_token;
-
-        getUserInfoByAccessToken(token);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.BUNDLE_KEY_USER_TOKEN, token);
+        Navigator.getInstance().navigate(LoginActivity.this, HomeActivity.class, bundle, true, true);
     }
 
-    public class ClickHandler {
-        private Context mContext;
+    @Override
+    public void onTokenError(String auth_token) {
 
-        public ClickHandler(Context mContext) {
-            this.mContext = mContext;
-        }
+    }
 
-        public void onInstagramLogin(View view) {
-            // displayAuthenticationDialog();
-            appPreferences.clear();
-            if (!isProgressing) {
-                isProgressing = true;
-                mLoginBinding.progressBar.setVisibility(View.VISIBLE);
-
-                Bundle bundle = new Bundle();
-                bundle.putString(Constants.REDIRECT_URL, getResources().getString(R.string.redirect_url));
-                bundle.putString(Constants.REQUEST_URL, getRequestUrl());
-
-                Navigator.getInstance().navigateForResult(LoginActivity.this, AuthenticationActivity.class,
-                        bundle, false, false, Constants.INTENT_KEY_AUTHENTICATION_IG);
-            }
-
-        }
-
+    @Override
+    public void onButtonClicked() {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.REDIRECT_URL, getResources().getString(R.string.redirect_url));
+        bundle.putString(Constants.REQUEST_URL, getRequestUrl());
+        authFragment.setArguments(bundle);
+        changeFragment(authFragment, false);
     }
 
     private String getRequestUrl() {
@@ -143,30 +97,4 @@ public class LoginActivity extends BaseActivity implements AuthenticationListene
                 "&response_type=token&display=touch&scope=public_content";
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constants.INTENT_KEY_AUTHENTICATION_IG) {
-            if (resultCode == RESULT_OK) {
-
-                if (data != null) {
-                    token = data.getStringExtra(Constants.INTENT_KEY_ACCESS_TOKEN);
-                    Log.e(TAG, "[token]:" + token);
-                    authenticationListener.onTokenReceived(token);
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-
-                mLoginBinding.progressBar.setVisibility(View.GONE);
-                isProgressing = false;
-            }
-        }
-    }
-
-
-    private void displayAuthenticationDialog() {
-        authenticationDialog = new AuthenticationDialog(LoginActivity.this, LoginActivity.this);
-        authenticationDialog.setCancelable(true);
-        authenticationDialog.show();
-    }
 }
