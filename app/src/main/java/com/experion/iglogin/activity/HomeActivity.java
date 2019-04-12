@@ -22,7 +22,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mActivityHomeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         initBasics();
         getBundleData();

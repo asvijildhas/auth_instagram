@@ -30,7 +30,6 @@ public class UserDetailsViewModel extends ViewModel {
 
     public void getUserDetails(String user_token) {
 
-
         ApiInterface api = RestService.getApi(Constants.INSTAGRAM_SELF_URL);
         if (api == null) {
         } else {
@@ -38,11 +37,8 @@ public class UserDetailsViewModel extends ViewModel {
             call.enqueue(new Callback<InstagramUserDetails>() {
                 @Override
                 public void onResponse(Call<InstagramUserDetails> call, Response<InstagramUserDetails> response) {
-                    Log.e("UserDetailsViewModel", "response:" + call.request().url());
-
                     if (response.code() == 200) {
                         if (response.body() != null) {
-                            Log.e("UserDetailsViewModel", "response:" + new Gson().toJson(response.body()));
                             responseData.setValue(response.body());
                             //remove memory
                             populateNullResponse();
@@ -57,8 +53,6 @@ public class UserDetailsViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call<InstagramUserDetails> call, Throwable t) {
-                    Log.e("UserDetailsViewModel", "onFailure:" + t.getMessage());
-                    Log.e("UserDetailsViewModel", "onFailure:" + call.request().url());
                     populateNullResponse();
                 }
             });
