@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">IGLogin</string>
+    <string name="login_button">Login with instagram</string>
+
+
+    <string name="client_id">7194b774be5c4691a3b06df7631f93e2</string>
+    <string name="redirect_url">http://www.experionglobal.com</string>
+    <string name="base_url">https://api.instagram.com/</string>
+    <string name="get_user_info_url">https://api.instagram.com/v1/users/self/?access_token=</string>
+    <string name="login_error">Error during login</string>
+    <string name="err_internet_failure">Please check your internet connection</string>
+
+</resources>
