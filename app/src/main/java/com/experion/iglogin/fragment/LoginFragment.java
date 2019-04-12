@@ -19,7 +19,7 @@ import com.experion.iglogin.interfaces.OnButtonClickCallBack;
 
 
 public class LoginFragment extends Fragment {
-    //    private ClickHandler mClickHandler;
+
     private View rootView;
     private FragmentLoginBinding loginBinding;
 
@@ -32,8 +32,6 @@ public class LoginFragment extends Fragment {
     public LoginFragment() {
         // Required empty public constructor
     }
-
-
 
 
     @Override

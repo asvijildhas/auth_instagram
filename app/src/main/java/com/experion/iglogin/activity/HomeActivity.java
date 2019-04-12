@@ -41,7 +41,6 @@ public class HomeActivity extends AppCompatActivity {
         if (bundle != null) {
             user_token = bundle.getString(Constants.BUNDLE_KEY_USER_TOKEN);
             getUserInfoByAccessToken(user_token);
-            mBasicDetails = (InstagramUserDetails) bundle.getSerializable(Constants.BUNDLE_KEY_USER_BASICS);
         }
     }
 
