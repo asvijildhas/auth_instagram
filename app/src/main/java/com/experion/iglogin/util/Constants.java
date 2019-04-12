@@ -19,6 +19,7 @@ public class Constants {
     public static final String BUNDLE_KEY_USER_BASICS = "com_bundle_key_user_basics";
     public static final String REDIRECT_URL = "bundle_key_redirect_url";
     public static final String REQUEST_URL = "bundle_key_request";
+    public static final String BUNDLE_KEY_USER_TOKEN = "bundle_key_user_token";
 }
 
 

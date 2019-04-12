@@ -58,4 +58,5 @@ dependencies {
 
     //adding glide
     implementation "com.github.bumptech.glide:glide:4.3.1"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
 }
