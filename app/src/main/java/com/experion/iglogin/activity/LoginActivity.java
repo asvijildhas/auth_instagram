@@ -1,30 +1,23 @@
 package com.experion.iglogin.activity;
 
 
-import androidx.annotation.Nullable;
+import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-import android.content.Context;
-
-import android.content.Intent;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
-
 import com.experion.iglogin.R;
-
 import com.experion.iglogin.application_basics.BaseActivity;
 import com.experion.iglogin.databinding.ActivityLoginBinding;
 import com.experion.iglogin.fragment.LoginFragment;
-import com.experion.instagramauth.interfaces.AuthenticationListener;
 import com.experion.iglogin.interfaces.OnButtonClickCallBack;
 import com.experion.iglogin.util.AppPreferences;
 import com.experion.iglogin.util.Constants;
 import com.experion.iglogin.util.Navigator;
 import com.experion.instagramauth.fragment.AuthenticationFragment;
+import com.experion.instagramauth.interfaces.AuthenticationListener;
 
 
 public class LoginActivity extends BaseActivity implements AuthenticationListener, OnButtonClickCallBack {
@@ -65,7 +58,7 @@ public class LoginActivity extends BaseActivity implements AuthenticationListene
 
     @Override
     public void onTokenReceived(String auth_token) {
-        if (auth_token == null)
+        if(auth_token==null)
             return;
         appPreferences.putInstagramToken(AppPreferences.TOKEN, auth_token);
         token = auth_token;
@@ -94,7 +87,7 @@ public class LoginActivity extends BaseActivity implements AuthenticationListene
                 "oauth/authorize/?client_id=" +
                 getResources().getString(R.string.client_id) +
                 "&redirect_uri=" + getResources().getString(R.string.redirect_url) +
-                "&response_type=token&display=touch&scope=public_content";
+                "&response_type=token&display=touch&scope=basic";
     }
 
 }
